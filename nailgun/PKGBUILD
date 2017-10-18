@@ -1,0 +1,23 @@
+# Maintainer: Kajetan Rzepecki ("idorobots") <k@spartan.works>
+
+pkgname=nailgun
+pkgver=3bfa27f250b84f2893d5a536ac70962d584250f7
+pkgrel=1
+pkgdesc="A client, protocol and server for running without incurring JVM startup overhead"
+url="http://martiansoftware.com/nailgun/index.html"
+license=('Apache-2.0')
+arch=(any)
+depends=('java-environment' 'maven')
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/facebook/${pkgname}/archive/${pkgver}.tar.gz")
+md5sums=('e44034828e3a7b72624d181830fe2ba3')
+
+build() {
+  cd ${pkgname}-${pkgver}
+  mvn clean install
+  make
+}
+
+package() {
+  install -Dm 644 $srcdir/${pkgname}-${pkgver}/nailgun-server/target/nailgun-server-0.9.2-SNAPSHOT.jar $pkgdir/usr/share/java/${pkgname}/${pkgname}.jar
+  install -Dm 755 $srcdir/${pkgname}-${pkgver}/ng						       $pkgdir/usr/bin/ng
+}
