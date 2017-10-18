@@ -1,0 +1,25 @@
+# Maintainer: Kajetan Rzepecki <kajetek@idorobots.org>
+
+pkgname=brother-dcpl8400cdn-lpr
+pkgver=1.1.2_1
+pkgrel=1
+pkgdesc="Brother DCP-L8400CDN lpr drivers."
+arch=('i686' 'x86_64')
+url="http://support.brother.com/g/b/downloadtop.aspx?c=eu_ot&lang=en&prod=dcpl8400cdn_eu"
+license=('GPL2' 'custom:brother')
+depends=('lib32-glibc')
+makedepends=('rpmextract')
+optdepends=('brother-dcpl8400cdn-cups: cupswrapper.')
+changelog="${pkgname}.changelog"
+source=("http://download.brother.com/welcome/dlf101078/dcpl8400cdnlpr-${pkgver/_/-}.i386.rpm")
+noextract=("dcpl8400cdnlpr-${pkgver/_/-}.i386.rpm")
+md5sums=('ddfa0f9052f5099a86be54a338f8effc')
+
+prepare() {
+	rpmextract.sh dcpl8400cdnlpr-${pkgver/_/-}.i386.rpm
+}
+
+package() {
+	cp -r ${srcdir}/opt ${pkgdir}/
+	cp -r ${srcdir}/usr ${pkgdir}/
+}

@@ -1,0 +1,17 @@
+pkgver="1.1.3_1"
+
+post_install() {
+	echo "Running setup program..."
+	sudo /opt/brother/Printers/dcpl8400cdn/cupswrapper/cupswrapperdcpl8400cdn
+	echo "done."
+
+	cat << EOF
+==> Now visit the CUPS configuration page to add your printer @ http://localhost:631/admin
+EOF
+}
+
+pre_remove() {
+	echo "Running setup program to uninstall..."
+	sudo /opt/brother/Printers/dcpl8400cdn/cupswrapper/cupswrapperdcpl8400cdn -e
+	echo "done."
+}
