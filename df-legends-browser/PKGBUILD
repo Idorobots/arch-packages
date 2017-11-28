@@ -1,0 +1,25 @@
+# Maintainer: Kajetan Rzepecki ("idorobots") <k@spartan.works>
+
+pkgname=df-legends-browser
+_pkgname=LegendsBrowser
+pkgver=1.14
+pkgrel=1
+pkgdesc="Legends Browser is an multi-platform, open source, java-based legends viewer for dwarf fortress 0.42. "
+url="https://github.com/robertjanetzko/LegendsBrowser"
+license=('MIT')
+arch=(any)
+depends=('java-environment' 'maven')
+source=("${pkgname}"
+        "${pkgname}-${pkgver}.tar.gz::https://github.com/robertjanetzko/LegendsBrowser/archive/${pkgver}.tar.gz")
+sha256sums=('2138e75b66ccb2e401c606c21afcaf27ec155e2a06af9a3360bb10f72f12812e'
+            '9162475d3c91e04209692f3f7c7f774ce139cd17c493ab59f13137f2d4a117aa')
+
+build() {
+  cd ${_pkgname}-${pkgver}
+  mvn clean package
+}
+
+package() {
+  install -Dm 644 $srcdir/${_pkgname}-${pkgver}/target/legendsbrowser-${pkgver}-shaded.jar $pkgdir/usr/share/java/${pkgname}/${pkgver}.jar
+  install -Dm 755 $srcdir/${pkgname} $pkgdir/usr/bin/${pkgname}
+}
