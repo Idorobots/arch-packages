@@ -1,0 +1,3 @@
+[submodule "guix"]
+	path = guix
+	url = https://aur.archlinux.org/guix.git/

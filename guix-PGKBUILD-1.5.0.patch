@@ -1,0 +1,118 @@
+--- PKGBUILD	2026-10-25 00:07:56.729680673 +0200
++++ PKGBUILD-1.5.0	2026-10-25 00:08:57.110476491 +0200
+@@ -3,10 +3,10 @@
+ 
+ # In order to verify the PGP signature of the source archive, you may need to
+ # use this command to download the needed public key:
+-#   gpg --recv-keys 3CE464558A84FDC69DB40CFB090B11993D9AEBB5
++#   gpg --recv-keys A28BF40C3E551372662D14F741AAE7DCCA3D8351
+ 
+ pkgname=guix
+-pkgver=1.4.0
++pkgver=1.5.0
+ pkgrel=1
+ pkgdesc='A purely functional package manager for the GNU system'
+ arch=('x86_64' 'i686' 'armv7h')
+@@ -16,7 +16,6 @@
+ makedepends=(
+   'guile-ssh>=0.13.0'
+   'guile-zstd'
+-  'guile-semver'
+   'guile-lib'
+   'bash-completion'
+   'fish'
+@@ -24,7 +23,7 @@
+   'po4a')
+ depends=(
+   'guile>=3.0.3'
+-  'guile-gcrypt>=0.1.0'
++  'guile-gcrypt>=0.2.0'
+   'guile-gnutls'
+   'guile-sqlite3>=0.1.0'
+   'guile-zlib>=0.1.0'
+@@ -33,6 +32,8 @@
+   'guile-git-lib>=0.5.0'
+   'guile-json>=4.3.0'
+   'guile-lzma'
++  'guile-semver'
++  'git'
+   'sqlite>=3.6.19'
+   'bzip2'
+   'disarchive'
+@@ -42,31 +43,18 @@
+   'bash-completion: to enable bash programmable completion'
+   'guile-ssh: to offload builds to other machines'
+   'guile-zstd: to use and publish zstd substitutes'
+-  'guile-semver: to use the crate importer'
+   'guile-lib: to use the go importer')
+ source=(
+-  "https://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"{,.sig}
+-  'guix-1.4.0-tests-guix-home.patch'
+-  'guix-1.4.0-guile-3.0.9.patch')
++  "https://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"{,.sig})
+ install="${pkgname}.install"
++backup=(
++  'etc/apparmor.d/guix'
++  'etc/apparmor.d/guix-daemon'
++  'etc/apparmor.d/tunables/guix')
+ sha256sums=(
+-  '43c769cbf632ef05449ac1fa48c1ba152c33494c6abc7e47137bba7b2149f8a4'
+-  'b30c7e63048c3fe4e72d6146f107e55e27d1ea1eb5bc7fd8818f20a1a32c8e10'
+-  '930b94fae51eb84f8fd1ad5b6be373dc2a8c8887cf71d100d404159c079ddece'
+-  'c4b746b0e90981b5efde1fde093632899950d1724df9182bc9a45b4773be1f43')
+-validpgpkeys=('3CE464558A84FDC69DB40CFB090B11993D9AEBB5')
+-
+-prepare() {
+-	cd "${srcdir}/${pkgname}-${pkgver}"
+-	local source_file
+-	for source_file in "${source[@]}"; do
+-		case "${source_file}" in
+-			*.patch)
+-				patch -p1 < "${srcdir}/${source_file}"
+-				;;
+-		esac
+-	done
+-}
++  'df2102eed00aff0b17275654a42f094c8a1117ec065884eb1ff76005e47415c5'
++  'SKIP')
++validpgpkeys=('A28BF40C3E551372662D14F741AAE7DCCA3D8351')
+ 
+ build() {
+ 	local bash_completion_dir="$(pkg-config --variable=completionsdir bash-completion)"
+@@ -83,18 +71,6 @@
+ 
+ check() {
+ 	cd "${srcdir}/${pkgname}-${pkgver}"
+-	# Check whether the current working directory is too long
+-	local cwd_str="$(pwd)"
+-	local cwd_len="${#cwd_str}"
+-	# The test tests/gexp.scm fails when the path is longer than 29 bytes
+-	# because of the length limit on the shebang line. Since we have increased
+-	# the limit by 7 by renaming test-tmp to t with ac_cv_guix_test_root cache
+-	# variable, the limit we use here is 36 bytes.
+-	if [ "${cwd_len}" -gt 36 ]; then
+-		error "${cwd_str} is too long."
+-		error "The working directory cannot be longer than 36 bytes."
+-		false
+-	fi
+ 	# Make sure we have a valid shell accepting -c option. We cannot run tests
+ 	# in parallel because it can cause permission denied error when copying
+ 	# gnu/packages/bootstrap/i686-linux/bash.
+@@ -110,8 +86,7 @@
+ 	rm -r "${pkgdir}/etc/openrc"
+ 	# Remove unused sysvinit service files
+ 	rm -r "${pkgdir}/etc/init.d"
+-	# Remove the empty directory left by sysvinit service files as well
+-	rmdir "${pkgdir}/etc"
++	# Keep /etc/apparmor.d, which is now installed by Guix 1.5.0.
+ 	# Rename systemd service files provided by upstream because they are not
+ 	# usable without previous guix installation
+ 	local system_unit_dir="${pkgdir}/usr/lib/systemd/system"
+@@ -128,6 +103,7 @@
+ 	local guix_profile_root="/var/guix/profiles/per-user/root/current-guix"
+ 	sed -e "s|^ExecStart=${guix_profile_root}/bin|ExecStart=/usr/bin|" \
+ 		-e "s|^Description=\(.*\)|Description=\1 (default)|" \
++		-e "/^User=guix-daemon$/d" \
+ 		-e "/^Environment=/d" "${guix_daemon_upstream}" \
+ 		> "${guix_daemon_default}"
+ 	sed -e "s|^ExecStart=${guix_profile_root}/bin|ExecStart=/usr/bin|" \
