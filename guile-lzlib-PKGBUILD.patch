@@ -1,0 +1,21 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index ea289af..c7f5f74 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -2,13 +2,13 @@
+
+ pkgname=guile-lzlib
+ pkgver=0.3.0
+-pkgrel=1
++pkgrel=2
+ pkgdesc='Guile bindings for lzlib'
+ arch=('x86_64' 'i686' 'armv7h')
+-url='https://notabug.org/guile-lzlib/guile-lzlib'
++url='https://codeberg.org/guile-compression/guile-lzlib'
+ license=('GPL3')
+ depends=('guile' 'lzlib')
+-source=("${pkgname}-${pkgver}.tar.gz::https://notabug.org/${pkgname}/${pkgname}/archive/${pkgver}.tar.gz")
++source=("${pkgname}-${pkgver}.tar.gz::https://codeberg.org/guile-compression/${pkgname}/archive/${pkgver}.tar.gz")
+ sha256sums=('a7f99c8d2a143e05ea22db2dc8b9ce6c27cae942162b45ee3015ed9027af0ff2')
+
+ build() {

@@ -4,3 +4,6 @@
 [submodule "guile-gcrypt"]
 	path = guile-gcrypt
 	url = https://aur.archlinux.org/guile-gcrypt.git
+[submodule "guile-lzlib"]
+	path = guile-lzlib
+	url = ssh://aur@aur.archlinux.org/guile-lzlib.git
