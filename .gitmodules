@@ -1,3 +1,6 @@
 [submodule "guix"]
 	path = guix
 	url = https://aur.archlinux.org/guix.git/
+[submodule "guile-gcrypt"]
+	path = guile-gcrypt
+	url = https://aur.archlinux.org/guile-gcrypt.git
